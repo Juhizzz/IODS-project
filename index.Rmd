@@ -1,5 +1,6 @@
 ---
 title: "IODS course project"
+author: "Juho Ivaska"
 output:
   html_document:
     theme: cosmo
