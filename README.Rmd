@@ -1,3 +1,5 @@
 ---
-Yes, very nice start to the course.
-Link to diary: https://github.com/Juhizzz/IODS-project.git
+output: github_document
+---
+Yes, very nice course so far. 
+Link to diary:https://juhizzz.github.io/IODS-project/

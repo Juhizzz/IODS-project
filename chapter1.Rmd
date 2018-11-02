@@ -1,5 +1,5 @@
 
 # About the project
-Alright, quite looking forward to this course. Hope I'll have enough time to do everything properly.
-Link to my github repository: https://github.com/Juhizzz/IODS-project.git
+"Alright, quite looking forward to this course. Hope I'll have enough time to do everything properly.
+Link to my github repository: https://github.com/Juhizzz/IODS-project.git" 
 *Write a short description about the course and add a link to your github repository here. This is an R markdown (.Rmd) file so you can use R markdown syntax. See the 'Useful links' page in the mooc area (chapter 1) for instructions.*
