@@ -13,3 +13,4 @@ write.table(analysis_dataset, file = "learning2014.txt")
 read.table("C:/Users/juhoi/OneDrive/Tiedostot/Coodaushit/IODS-project/data/learning2014.txt")
 str(learning2014)
 head(learning2014)
+#endofstory
