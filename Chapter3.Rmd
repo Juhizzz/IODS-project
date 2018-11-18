@@ -1,0 +1,74 @@
+# Chapter3
+
+2. Lets read the alc data.
+```{r}
+alc <- read.csv("C:/Users/juhoi/OneDrive/Tiedostot/Coodaushit/IODS-project/create_alc.R")
+names(alc)
+```
+
+3. I choose sex, final exam scores, famsize and studytime as my variables. My hypotheses are as follows:
+There's less females than males who consume a lot of alcohol. 
+I also assume that a person who doesn't consume a lot of alcohol does get better grades as someone who does drink a lot.
+
+```{r}
+
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+```
+
+4. Now we test the hypothesis.
+```{r}
+alc %>% group_by(sex, high_use) %>%summarise(count=n(),mean_grade=mean(G3))
+```
+
+First here is the crosstabulation for alcohol usage, sex and the average of the final exam grades. Results tell us two things:
+  i.) Higher percentage of men than women use alcohol a lot.
+  ii.) For women, those who drink more have slightly higher grades. For men, binge-drinkers have worse grades.
+
+
+Then we create a boxplot of high alcohol usages effects to the final grades.
+```{r}
+g1 <- ggplot(alc, aes(x= high_use, y=G3), col=sex)
+g1 + geom_boxplot()+ylab("grade")
+```
+It is clear that on average, alcohol-lovers have worse grades than moderate drinkers.
+
+Then here we have alcohol usage vs. study time as a barplot. Low drinkers in black and high drinkers in green.
+
+```{r}
+counts <- table(alc$high_use, alc$studytime)
+barplot(counts, main= "Alcohol usage vs. studytime", xlab="studytime", beside=TRUE, col = c("black", "green"))
+```
+Key ratio here is the share of drunkards in each category of study time. The shares are about equally small in 4 and 3 but get bigger in 2 and in 1 it is almost as usual to drink a lot than not to drin a lot.
+
+Then we compare alcohol usage to family size.
+```{r}
+counts2 <- table(alc$high_use, alc$famsize)
+barplot(counts2, main= "Alcohol usage vs. famsize", xlab="famsize", beside=TRUE, col = c("blue", "pink"))
+```
+The result is that slightly higher share of students from small families, than from big families, drink a lot.
+
+5. Logistic regression is here.
+```{r}
+m <- glm(high_use ~ famsize + sex + G3 + studytime, data = alc, family = "binomial")
+summary(m)
+```
+Coefficients as odds ratios:
+```{r}
+OR <- coef(m) %>% exp
+OR
+```
+COnfidence intervals:
+```{r}
+CI <- confint(m) %>% exp
+CI
+```
+
+6. Sex ja study time seem to have a statistical relationship to alcohol use. That's why we modify the model to include only sex and study time.
+```{r}
+m <- glm(high_use ~ sex + studytime, data = alc, family = "binomial")
+```
+Then we'll crosstabulate the 
+
+
