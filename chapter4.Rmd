@@ -1,0 +1,57 @@
+---
+title: "chapter4"
+
+First we load the "Boston" data from MASS package and explore it.
+```{r}
+library(MASS)
+data("Boston")
+str(Boston)
+summary(Boston)
+names(Boston)
+```
+"Boston":ssa on 506 havaintoa 14:sta muuttujasta. Names() funktio antaa muuttujien nimet. Summary() puolestaan tietoa jokaisen muuttujan jakaumasta erikseen.
+
+Now we explore the relationship between variables.
+```{r}
+library(corrplot)
+library(tidyverse)
+cor_matrix<-cor(Boston)  %>% round(digits=2)
+corrplot(cor_matrix, type="upper", cl.pos = "b",tl.pos = "d",tl.cex = 0.6  )
+
+```
+In the graph, blue colour represents positive correlation between variables and red negative ones. The darker the colour and the bigger the ball, the stronger the correlation is. For example, big blue ball between "rad" and "tax" tells that there exists a strong correlation between acces to highways and property tax rate.
+
+Now we'll standardise the data
+```{r}
+boston_scaled <- scale(Boston)
+summary(boston_scaled)
+```
+Now all the observations are using the same scale and for example making assumptions about summary is meaningful. 
+
+Then turn boston_scaled back to being a data.frame
+```{r}
+boston_scaled <- as.data.frame(boston_scaled)
+```
+
+These lines give us a categorical variable crime
+```{r}
+bins <- quantile(boston_scaled$crim)
+crime <- cut(boston_scaled$crim, breaks = bins, include.lowest = TRUE, labels = c("low", "med_low", "med_high", "high"))
+```
+
+And these replace the old crim with the categorical crime
+```{r}
+boston_scaled <- dplyr::select(boston_scaled, -crim)
+boston_scaled <- data.frame(boston_scaled, crime)
+```
+
+Then we devide the data to train wiht 80% of the data and test with 20% of the data.
+```{r}
+n <- nrow(boston_scaled)
+ind <- sample(n,  size = n * 0.8)
+train <- boston_scaled[ind,]
+test <- boston_scaled[-ind,]
+```
+
+
+
