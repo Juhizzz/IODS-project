@@ -21,6 +21,7 @@ corrplot(cor_matrix, type="upper", cl.pos = "b",tl.pos = "d",tl.cex = 0.6  )
 ```
 In the graph, blue colour represents positive correlation between variables and red negative ones. The darker the colour and the bigger the ball, the stronger the correlation is. For example, big blue ball between "rad" and "tax" tells that there exists a strong correlation between acces to highways and property tax rate.
 
+4. 
 Now we'll standardise the data
 ```{r}
 boston_scaled <- scale(Boston)
@@ -53,5 +54,32 @@ train <- boston_scaled[ind,]
 test <- boston_scaled[-ind,]
 ```
 
+5.
+Now we'll create the LDA plot.
+```{r}
+lda.fit <- lda(crime ~ ., data = train)
+lda.arrows <- function(x, myscale = 1, arrow_heads = 0.1, color = "red", tex = 0.75, choices = c(1,2)){
+  heads <- coef(x)
+  arrows(x0 = 0, y0 = 0, 
+         x1 = myscale * heads[,choices[1]], 
+         y1 = myscale * heads[,choices[2]], col=color, length = arrow_heads)
+  text(myscale * heads[,choices], labels = row.names(heads), 
+       cex = tex, col=color, pos=3)
+}
+classes <- as.numeric(train$crime)
+plot(lda.fit, dimen = 2, col=classes, pch=classes)
+lda.arrows(lda.fit, myscale = 1)
+
+```
+A very cool plot appears. 
+
+6.
+Here's the prediction of the LDA model on the test data.
+```{r}
+correct_classes <- test$crime
+lda.pred <- predict(lda.fit, newdata = test)
+table(correct = correct_classes, predicted = lda.pred$class)
+```
+It appears that LDA model predicts the crime classes quite well.
 
 
