@@ -82,4 +82,59 @@ table(correct = correct_classes, predicted = lda.pred$class)
 ```
 It appears that LDA model predicts the crime classes quite well.
 
+7. 
+Before we practice K-means clustering, we should reload the Boston data, scale it, and afterwards measure the distances between the observations. 
 
+```{r}
+data(Boston)
+boston_scaled1<-as.data.frame(scale(Boston))
+dist_eu<-dist(boston_scaled1)
+summary(dist_eu)
+head(boston_scaled1)
+```
+
+
+The scaled Boston data will now be used for K-means clustering. It isn't trivial (in many cases) to investigate on the number of clusters that can classify the data. Therefore, we need to first randomize the usage of a certain number of clusters.
+
+First let's start with a random number cluster. Let us choose k=4 and apply k-means on the data.
+```{r}
+kmm = kmeans(boston_scaled1,6,nstart = 50 ,iter.max = 15) 
+```
+
+
+
+The elbow method is one good technique using which we can estimate the number of clusters.
+```{r}
+library(ggplot2)
+set.seed(1234)
+k.max <- 15
+data <- boston_scaled1
+wss <- sapply(1:k.max, 
+              function(k){kmeans(data, k)$tot.withinss})
+qplot(1:k.max, wss, geom = c("point", "line"), span = 0.2,
+     xlab="Number of clusters K",
+     ylab="Total within-clusters sum of squares")
+```
+
+
+  
+The elbow plot seems to indicate that we may not find more than two clear clusters but it's good to confirm predictions using another method because there is no shortage of methods for analyses like these. Let's try the "NbClust"- package.
+```{r}
+library(NbClust)
+nb <- NbClust(boston_scaled1, diss=NULL, distance = "euclidean", 
+              min.nc=2, max.nc=5, method = "kmeans", 
+              index = "all", alphaBeale = 0.1)
+hist(nb$Best.nc[1,], breaks = max(na.omit(nb$Best.nc[1,])))
+```
+
+
+Now, it's easier to see that the data is described better with two clusters. With that, we should run the k-means algorithm again. 
+```{r, fig.height=10, fig.width=10}
+km_final = kmeans(boston_scaled1, centers = 2) 
+pairs(boston_scaled1[3:9], col=km_final$cluster)
+```
+
+
+
+
+The clusters in the above plot are divided into two groups and outlined using the colors red and black. Some of the pairs are better grouped than other ones in the plot. One of the important observations can be made with the "chas"-variable where the observations in all of the pairs formed by it are wrongly clustered. Still, clusters formed by the "rad" variable are better separated.
