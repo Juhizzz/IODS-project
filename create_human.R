@@ -30,21 +30,5 @@ colnames(gii)[10] <- "LabourM"
 library(dplyr); library(ggplot2)
 gii <- mutate(gii, SecEdratio = SecEdF/SecEdM)
 gii <- mutate(gii, LabourRatio = LabourF/LabourM)
-#
+
 human <- inner_join(hd, gii)
-colnames(human)
-#
-#
-# Here starts excersices of week 5
-#
-#
-names(human)
-summary(human)
-str(human)
-#more info on the variables can be found here: http://hdr.undp.org/en/content/human-development-index-hdi
-#
-#1.
-library(dplyr)
-?mutate
-?mutate_each
-human <- mutate(human, GNI = as.numeric(human$GNI))

@@ -1,0 +1,45 @@
+#chapter5.Rmd
+
+First we read the data:
+```{r}
+human <- read.table("http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/human2.txt", sep=",", header = TRUE)
+
+```
+
+1.Here are some correlations between the variables:
+```{r}
+library(GGally)
+library(ggplot2)
+ggpairs(human)
+cor(human)
+
+```
+
+2. PCA analysi and a biplot 
+```{r}
+pca_human <- prcomp(human)
+biplot(pca_human, choices = 1:2, cex=c(0.8,1), col=c("grey40", "deeppink2"))
+
+```
+
+3. Standardizing the variables and performing the same analysis
+```{r}
+human_std <- scale(human)
+pca_human_std <- prcomp(human_std)
+biplot(pca_human, choices = 1:2, cex=c(0.8,1), col=c("grey40", "deeppink2"))
+
+```
+Results are not different when comparing to PCA without standardizing. It is a fact of an interesting nature.
+
+4.
+
+5. Here we'll do a Multiple Correspondence Analysis. It tells us some facts about tea uasge according to the "tea" data. 
+```{r}
+library(FactoMineR)
+library(dplyr)
+library(tidyselect)
+library(tidyr)
+data("tea")
+
+```
+I wasns't able to finish this due to knitting errors of index.Rmd but maybe give me some points? :D
