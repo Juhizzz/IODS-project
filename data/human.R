@@ -45,6 +45,13 @@ str(human)
 #
 #1.
 library(dplyr)
+library(stringr)
 ?mutate
 ?mutate_each
 human <- mutate(human, GNI = as.numeric(human$GNI))
+
+#2.
+keep <- c("Country", "Edu2.FM", "Labo.FM", "Life.Exp", "Edu.Exp", "GNI", "Mat.Mor", "Ado.Birth", "Parli.F")
+human <- select(human, one_of(keep))
+#3.
+human_ <- filter(human, TRUE)
