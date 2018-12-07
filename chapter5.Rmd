@@ -1,4 +1,4 @@
-#chapter5.Rmd
+#chapter5
 
 First we read the data:
 ```{r}
