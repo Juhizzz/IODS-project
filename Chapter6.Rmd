@@ -1,0 +1,98 @@
+#Chapter6
+Juho Ivaska, 9.12.2018
+
+This final peace of course work is named chapter 6  because I thought it would be logical. We use the BPRS and RATS data from the previously done wrangling.
+
+First, some packages maybe or maybe not needed in the future:
+```{r}
+library(data.table)
+library(dplyr)
+library(stringr)
+library(ggplot2)
+library(GGally)
+library(tidyr)
+```
+
+1.
+
+First we shall work with RATS data and do some plots. I had some troubles with knitting this file so I put all the wrangling done before here to make sure knitting goes well.
+```{r}
+BPRS <- read.table("https://raw.githubusercontent.com/KimmoVehkalahti/MABS/master/Examples/data/BPRS.txt", header = TRUE, sep = " ")
+RATS <- read.table("https://raw.githubusercontent.com/KimmoVehkalahti/MABS/master/Examples/data/rats.txt", header = T, sep = "\t")
+
+BPRS$treatment <- factor(BPRS$treatment)
+BPRS$subject <- factor(BPRS$subject)
+
+RATS$ID <- factor(RATS$ID)
+RATS$Group <- factor(RATS$Group)
+
+BPRSL <- BPRS %>%
+  gather(week, BPRS, week0:week8)
+RATSL <- RATS %>%
+  gather(Time, Weight, WD1:WD64)
+```
+
+
+Here's a plot which gives the change of rats' weights through the study period of 9 weeks. In the study, three groups of rats were fed differently and scientists followed their weight.
+```{r}
+ggplot(RATSL, aes(x = Time, y = Weight, group = ID, linetype = Group)) +
+  geom_line()
+
+
+```
+
+We can see that all the weights followed quite steadily the same path with some outliers. They all also seem to have a loss in the end. Three different line types symbol the three different group of rats.
+
+Now here is a boxplot of the means of the weights of the different groups of mice:
+```{r}
+RATSL64 <- RATSL %>%
+  filter(Time > 1) %>%
+  group_by(Group, ID) %>%
+  summarise(mean = mean(Weight)) %>%
+  ungroup()
+
+ggplot(RATSL64, aes(x = Group, y = mean)) +
+  geom_boxplot() +
+  stat_summary(fun.y = "mean", geom = "point", shape=23, size=4, fill = "white") +
+  scale_y_continuous(name = "mean(weight), days 1-64")
+```
+
+We can see that the mean is the lowest with the group one.
+
+Then we want to show the same boxplots wihtout some outliers. This should give more accurate results.
+```{r}
+RATSL641 <- RATSL %>%
+  filter(Time > 1, Weight < 580) %>%
+  group_by(Group, ID) %>%
+  summarise(mean = mean(Weight)) %>%
+  ungroup()
+
+ggplot(RATSL641, aes(x = Group, y = mean)) +
+  geom_boxplot() +
+  stat_summary(fun.y = "mean", geom = "point", shape=23, size=4, fill = "white") +
+  scale_y_continuous(name = "mean(weight), days 1-64")
+
+```
+
+Then we'll move to analyze BPRS data. 
+First we'll make on boxplot to see how BPRS scores developed through the study period with each treatment
+```{r}
+ggplot(BPRSL, aes(x = week, y = BPRS, col=treatment)) +
+  geom_boxplot()
+```
+
+Next we can see a linear model made to notice differencies between the two treatments:
+```{r}
+BPRS_reg <- lm(BPRSL$BPRS ~ BPRSL$treatment)
+summary(BPRS_reg)
+```
+
+And here's is a Random intercept model which allows more formal analysis of the data:
+```{r}
+library(lme4)
+
+BPRSL_ref <- lmer(BPRS ~ treatment + (1 | subject), data = BPRSL, REML = FALSE)
+summary(BPRSL_ref)
+```
+
+Now we have taken a nice look to the data and made some very decent notions. Nice work!
